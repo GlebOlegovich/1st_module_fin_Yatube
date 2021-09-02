@@ -1,0 +1,42 @@
+<!-- За основу берем шаблон base.html -->
+{% extends 'base.html' %}
+
+{% load thumbnail %}
+<!-- Изменяем значение title, Django - сила! -->
+{% block title %}
+  Записи сообщества {{ group.title }}
+{% endblock %}
+
+{% block content %}
+  <h1>{{ group.title }}</h1>
+
+  <p> {{ group.description }} </p>
+  <!-- Цикл выводит все посты, которые передала view функция -->
+  {% for post in page_obj %}
+    <article>
+      <ul>
+        <li>
+          Автор: {{ post.author.get_full_name }}
+        </li>
+        <li>
+          Дата публикации: {{ post.pub_date|date:"d E Y" }}
+        </li>
+      </ul>
+      <p>{{ post.text|linebreaks }}</p>
+      {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
+        {# <img class="card-img my-2" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"> #}
+        <a data-fancybox data-caption="Пост: « {{ post }} », Автор: {{ post.author.get_full_name }}" data-src="{{ post.image.url }}">
+          <img class="card-img my-2" src="{{ im.url }}" />
+        </a>
+      {% endthumbnail %}
+      <a class="btn btn-danger"
+      href="{% url 'posts:post_detail' post.id %}">
+      Подробная информация
+    </a>
+    </article>
+    <!-- Если не последняя запись из Posts, то добавляем <hr> --> 
+    {% if not forloop.last %}<hr>{% endif %}
+    {% if forloop.last %}<br><br>{% endif %} 
+  {% endfor %}
+  {% include 'posts/includes/paginator.html' %}
+{% endblock %}

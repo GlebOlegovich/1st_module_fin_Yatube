@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% load cache %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block content %}
+  {% include 'posts/includes/hello_from_godleib.html' %}
+
+  {% include 'posts/includes/switcher.html' %}
+
+  <h1>{{ title }}</h1>
+
+  {% for post_count in page_obj %}
+      {% cache my_timeout post_data post_count.id %}
+        <ul>
+          <li>
+            Автор: {{ post_count.author.get_full_name }}
+          </li>
+          <li>
+            Дата публикации: {{ post_count.pub_date|date:"d E Y" }}
+          </li>
+        </ul>
+        <p>{{ post_count.text|linebreaks }}</p>
+        {% thumbnail post_count.image "950x350" crop="center" upscale=True as im %}
+          {# <img class="card-img my-2" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"> #}
+          <a data-fancybox data-caption="Пост: « {{ post_count }} », Автор: {{ post_count.author.get_full_name }}" data-src="{{ post_count.image.url }}">
+            <img class="card-img my-2" src="{{ im.url }}" />
+          </a>
+        {% endthumbnail %}
+        
+        <a class="btn btn-danger"
+          href="{% url 'posts:post_detail' post_count.id %}">
+          Подробная информация
+        </a>
+        {% if post_count.group_id %}
+          <a class="btn btn-danger"
+            href="{% url 'posts:group_list' post_count.group.slug %}">
+            {# Вот тут показан пример работы метода __str__ модели групп #}
+            Все записи группы {{ post_count.group }}
+          </a>
+        {% endif %}
+
+      {% endcache %}
+
+      <!-- Если не последняя запись из Posts, то добавляем <hr> --> 
+      {% if not forloop.last %}<hr>{% endif %} 
+      {% comment %}
+        Если есть группа, то добавляем <br>x2, что бы кнопка не упиралась в футер
+        В примере оформления ссылка упирается в футер, решил сделать
+        немного покрасивее, что бы не упиралась сразу в футер
+      {% endcomment %}
+      {% if post_count.group_id %}<br>{% endif %}   
+      <br><br>  
+  {% endfor %} 
+
+  {% include 'posts/includes/paginator.html' %}
+{% endblock %}

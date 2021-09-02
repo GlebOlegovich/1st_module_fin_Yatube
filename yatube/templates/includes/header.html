@@ -1,0 +1,104 @@
+<!-- Использованы классы бустрапа для создания типовой навигации с логотипом -->
+<!-- В дальнейшем тут будет создано полноценное меню -->
+{% load static %}
+
+<nav class="navbar navbar-light" style="background-color: rgb(32, 36, 41)">
+  <div class="container">
+  <!-- ссылка должна вести на главную страницу -->
+    <a class="navbar-brand text-center w-100" href="{% url 'posts:index' %}", title="На главную",
+       stile="">
+      <img src="{% static 'img/logo.png' %}" width="45" height="45"
+           class="d-inline-block align-top" alt="">
+      <!--
+        тег span используется для добавления нужных стилей
+        отдельным участкам текста
+      -->
+      <span style="color:rgb(247, 72, 78)">Ya</span><span style="color:white">tube</span>  
+    </a> 
+    {% with request.resolver_match.view_name as view_name %}
+      {% comment %}
+      Меню - список пунктов со стандартными классами Bootsrap.
+      Класс nav-pills нужен для выделения активных пунктов 
+      {% endcomment %}
+      <ul class="nav nav-pills">
+        <li class="nav-item"> 
+          <a class="btn btn-outline-light me-2 {% if view_name  == 'about:author' %}active{% endif %}" 
+            href="{% url 'about:author' %}"
+          >
+            Об авторе
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-outline-light me-2 {% if view_name  == 'about:tech' %}active{% endif %}"
+            href="{% url 'about:tech' %}"
+          >
+            Технологии
+          </a>
+        </li>
+        {% if user.is_authenticated %}
+          {% if is_edit %}
+            <li class="nav-item"> 
+              <a class="btn btn-outline-light me-2 {% if view_name  == 'posts:post_edit' %}active{% endif %}"
+                href="{% url 'posts:post_edit' post_id %}"
+              >
+                 Редактировать запись
+              </a>
+            </li>
+          {% else %}
+            <li class="nav-item"> 
+              <a class="btn btn-outline-light me-2 {% if view_name  == 'posts:create_post' %}active{% endif %}"
+                href="{% url 'posts:create_post' %}"
+              >
+                Новая запись
+              </a>
+            </li>
+          </ul>
+          {% endif %}
+          <div class="text-end">
+            Добро пожаловать, 
+              <a href="{% url 'posts:profile' user.username %}">
+                <button class="btn btn-outline-light me-2" {% if view_name  == 'posts:profile' %}active{% endif %}>
+                  {{ user.username }}
+                </button>
+              </a>
+            &emsp;
+            <br>
+            <br>
+            {% if user.is_authenticated %}
+              <a href="{% url 'users:login' %}">
+              <button type="button" class="btn btn-outline-light me-2">
+                Сменить пользователя
+              </button>
+            </a>
+            {% endif %}
+            <a href="{% url 'users:password_change_form' %}">
+              <button type="button" class="btn btn-outline-light me-2">
+              Изменить пароль
+              </button>
+            </a>
+            <a href="{% url 'users:logout' %}">
+              <button type="button" class="btn btn-danger me-2">
+                Выйти
+              </button>
+            </a>
+          </div>
+        {% else %}
+          </ul>
+            <div class="text-end">
+              <a href="{% url 'users:signup' %}">
+                <button type="button" class="btn btn-outline-light me-2">
+                Регистрация
+                </button>
+              </a>
+              <a href="{% url 'users:login' %}"
+                ><button type="button" class="btn btn-danger me-2">Войти</button></a
+              >
+            </div>
+        {% endif %}
+    {% endwith %}
+    {# Конец добавленого в спринте #}
+  </div>
+      <audio controls="controls">
+	      <source src="{% static 'sound/sound.mp3' %}" type="audio/ogg">
+      </audio>
+</nav> 

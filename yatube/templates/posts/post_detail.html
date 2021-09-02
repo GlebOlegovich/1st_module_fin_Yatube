@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block content %}
+
+  <div class="row">
+    <aside class="col-12 col-md-3">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          Дата публикации: {{ post.pub_date|date:"d E Y" }}
+          Время публикации: {{ post.pub_date|time:"H:i" }}
+        </li>
+        <li class="list-group-item">
+          {% if post.group_id %}
+            Группа : {{ post.group }}
+            <a class="btn btn-danger"
+              href="{% url 'posts:group_list' post.group.slug %}">
+              Все записи группы
+            </a>
+          {% endif %}
+        </li>
+        <li class="list-group-item">
+          Автор:
+          {% if post.author.get_full_name %}
+            {{ post.author.get_full_name }}
+          {% else %}
+            {{ post.author.username }}
+          {% endif %}
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Всего постов автора:  {{ author_posts_count }}
+        </li>
+        {% if post.author.get_full_name == user.get_full_name %} 
+          <li class="list-group-item">
+            <a class="btn btn-danger" href="{% url 'posts:profile' post.author.username %}">
+              Ваш профиль
+            </a>
+          </li>
+          <li class="list-group-item">
+            <a class="btn btn-danger" href="{% url 'posts:post_edit' post.id %}">
+              Редактировать этот пост
+            </a>
+          </li>
+          <li class="list-group-item">
+            <a class="btn btn-danger" href="{% url 'posts:delete_post' post.id %}">
+              Решили удалить пост? Жмите сюда, но учтите, он удалится навсегда!
+            </a>
+          </li>
+        {% else %} 
+          <li class="list-group-item">
+            <a class="btn btn-danger" href="{% url 'posts:profile' post.author.username %}">
+              все посты пользователя
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </aside>
+    <article class="col-12 col-md-9">
+      <p>
+        {{ post.text|linebreaks }}
+      </p>
+      {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
+        {# <img class="card-img my-2" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"> #}
+        <a data-fancybox data-caption="Пост: « {{ post }} », Автор: {{ post.author.get_full_name }}" data-src="{{ post.image.url }}">
+          <img class="card-img my-2" src="{{ im.url }}" />
+        </a>
+      {% endthumbnail %}
+    {% include 'posts/includes/comments.html' %}
+    </article>
+  </div>
+  <br>
+{% endblock %}

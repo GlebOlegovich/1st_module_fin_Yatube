@@ -1,0 +1,25 @@
+{% load cache %} 
+
+    {% cache my_timeout godleib_post %}
+        <div class="card">
+            <div class="card-header" style="background-color:rgb(247, 72, 78)">
+                Самый первый пост - пост создателя.
+            </div>
+            <div class="card-body" style="background-color:rgb(32, 36, 41)">
+                <ul>
+                <li>
+                    Автор: {{ godleib_post.author.get_full_name }}
+                </li>
+                <li>
+                    Дата публикации: {{ godleib_post.pub_date|date:"d E Y" }}
+                </li>
+                </ul>
+                <p>{{ godleib_post.text|linebreaks }}</p>
+                
+                <a class="btn btn-danger"
+                href="{% url 'posts:post_detail' godleib_post.id %}">
+                Подробная информация
+                </a>
+            </div>
+        </div>
+    {% endcache %}

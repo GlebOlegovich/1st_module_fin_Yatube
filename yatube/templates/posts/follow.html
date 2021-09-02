@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% load cache %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block content %}
+  {% include 'posts/includes/switcher.html' %}
+  <h1>{{ title }}</h1>
+  {% if followings %}
+    Вы подписаны на: 
+    {% for follw in followings %}
+      <a class="btn btn-outline-light me-2" href="{% url 'posts:profile' follw %}">
+              {{ follw }}
+      </a>
+        {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+    <br>
+    <br>
+
+    {% for post_count in page_obj %}
+        {% cache my_timeout post_data post_count.id %}
+          <ul>
+            <li>
+              Автор: {{ post_count.author.get_full_name }}
+            </li>
+            <li>
+              Дата публикации: {{ post_count.pub_date|date:"d E Y" }}
+            </li>
+          </ul>
+          <p>{{ post_count.text|linebreaks }}</p>
+          {% thumbnail post_count.image "950x350" crop="center" upscale=True as im %}
+            {# <img class="card-img my-2" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"> #}
+            <a data-fancybox data-caption="Пост: « {{ post_count }} », Автор: {{ post_count.author.get_full_name }}" data-src="{{ post_count.image.url }}">
+              <img class="card-img my-2" src="{{ im.url }}" />
+            </a>
+          {% endthumbnail %}
+          
+          <a class="btn btn-danger"
+            href="{% url 'posts:post_detail' post_count.id %}">
+            Подробная информация
+          </a>
+          {% if post_count.group_id %}
+            <a class="btn btn-danger"
+              href="{% url 'posts:group_list' post_count.group.slug %}">
+              {# Вот тут показан пример работы метода __str__ модели групп #}
+              Все записи группы {{ post_count.group }}
+            </a>
+          {% endif %}
+
+        {% endcache %}
+
+        <!-- Если не последняя запись из Posts, то добавляем <hr> --> 
+        {% if not forloop.last %}<hr>{% endif %} 
+        <br><br>  
+    {% endfor %}
+  {% else %}
+    Вы ни на кого не подписаны пока, что... <br>
+    Подпишитесь на пользователей нашего сайта=) 
+  {% endif %}
+
+  {% include 'posts/includes/paginator.html' %}
+{% endblock %}

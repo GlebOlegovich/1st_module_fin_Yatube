@@ -1,0 +1,40 @@
+<!-- Форма добавления комментария -->
+{% load user_filters %}
+
+{% if user.is_authenticated %}
+  <div class="card my-4" style="background-color:rgb(32, 36, 41)">
+    <h5 class="card-header" style="background-color:rgb(247, 72, 78)">
+        Добавить комментарий:
+    </h5>
+    <div class="card-body" style="background-color:rgb(32, 36, 41)">
+      <form method="post" action="{% url 'posts:add_comment' post.id %}">
+        {% csrf_token %}      
+        <div class="form-group mb-2">
+          {{ form.text|addclass:"form-control" }}
+        </div>
+        <button type="submit" class="btn btn-danger">Отправить коментарий</button>
+      </form>
+    </div>
+  </div>
+{% endif %}
+
+{% for comment in comments %}
+    <div class="media mb-4">
+        <div class="media-body">
+        <h5 class="mt-0">
+            <a href="{% url 'posts:profile' comment.author.username %}">
+            {{ comment.author.username }}
+            </a>
+            {{ comment.created|date:"d E Y" }} в {{ comment.created|time:"H:i" }}
+        </h5>
+        <p>
+            {{ comment.text }}
+            {% if comment.author.get_full_name == user.get_full_name %}
+            <a class="btn btn-danger" href="{% url 'posts:delete_comment' comment.id %}">
+                Удалить комментарий
+            </a>
+        </p>
+        {% endif %}
+        </div>
+    </div>
+{% endfor %}

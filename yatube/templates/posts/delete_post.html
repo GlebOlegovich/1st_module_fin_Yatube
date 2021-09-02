@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Мы удалили ваш пост {{ post_id }}
+{% endblock %}
+{% block content %}
+  <div class="row justify-content-center" >
+  <div class="col-md-8 p-5">
+    <div class="card" style="background-color:rgba(247, 92, 98, 0.8)" >
+      <div class="card-header" style="background-color:rgb(247, 72, 78")>
+        Удаление поста
+      </div>
+      <div class="card-body">
+        <p>
+          Мы удалили ваш пост, с id {{ post_id }} из нашей БД!
+          Теперь его никто и никогда не найдет! Живите с этим...
+        </p>
+      </div> <!-- card body -->
+    </div> <!-- card -->
+  </div> <!-- col -->
+</div> <!-- row -->
+{% endblock %}
