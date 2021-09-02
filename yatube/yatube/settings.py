@@ -31,7 +31,7 @@ SECRET_KEY = 'w39ou327p*obi(1mx=a2ujl&+6954v^t2_w1052!bs9*bj1vz_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = False
+DEBUG = True
 
 LOGIN_URL = 'users:login'
 # При успешном входе
