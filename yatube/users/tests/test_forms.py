@@ -14,7 +14,7 @@ class UsersFormsTest(TestCase):
         cls.signup_data = {
             'first_name': 'Polina',
             'last_name': 'Golovneva',
-            'username': 'Polisha98',
+            'username': 'J2ef2geg',
             'email': 'pretty@woman.com',
             'password1': 'Test_password',
             'password2': 'Test_password'

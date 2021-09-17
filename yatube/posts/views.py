@@ -13,7 +13,10 @@ def index(request):
     template = 'posts/index.html'
 
     posts = Post.objects.select_related('author', 'group').all()
-    godleib_post = Post.objects.select_related('author', 'group').get(id=1)
+    try:
+        godleib_post = Post.objects.select_related('author', 'group').get(id=1)
+    except:
+        godleib_post = None
 
     # Показывать по 10 записей на странице.
     paginator = Paginator(posts, GLOBAL_SETTINGS['posts_on_page'])
